@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Petualangan Kata - SD NEGERI MIAWA</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka & Nunito -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandBlue: '#0284C7',
+                        brandYellow: '#F59E0B',
+                        brandGreen: '#10B981',
+                        brandRed: '#EF4444',
+                        brandPurple: '#8B5CF6',
+                        bgMain: '#E0F2FE'
+                    },
+                    fontFamily: {
+                        title: ['Fredoka', 'sans-serif'],
+                        body: ['Nunito', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #dcfce7 0%, #e0f2fe 50%, #fef3c7 100%);
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+        .font-title {
+            font-family: 'Fredoka', sans-serif;
+        }
+        .btn-bounce:active {
+            transform: scale(0.96);
+        }
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        .animate-float {
+            animation: floatSlow 3s ease-in-out infinite;
+        }
+        @keyframes popUp {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .anim-pop {
+            animation: popUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes shakeWrong {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        .anim-shake {
+            animation: shakeWrong 0.4s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-3 sm:p-5">
+
+    <!-- Container Utama Game -->
+    <div id="app-container" class="w-full max-w-md bg-white rounded-[32px] shadow-2xl border-4 border-amber-300 overflow-hidden relative flex flex-col min-h-[640px] justify-between my-auto">
+
+        <!-- ==================== 1. HALAMAN AWAL (DESAIN DISESUAIKAN) ==================== -->
+        <div id="screen-start" class="p-6 flex flex-col items-center justify-between flex-grow text-center">
+            
+            <!-- Header Badges -->
+            <div class="w-full flex flex-col items-center gap-2 pt-2">
+                <!-- Nama Sekolah di Paling Atas dan Diperbesar -->
+                <div class="w-full bg-gradient-to-r from-sky-600 via-blue-600 to-sky-600 text-white font-extrabold px-4 py-2.5 rounded-2xl shadow-md border-2 border-sky-300 text-lg sm:text-xl tracking-wide uppercase flex items-center justify-center gap-2">
+                    <span>🏫</span>
+                    <span>SD NEGERI MIAWA</span>
+                </div>
+                <div class="bg-amber-100 text-amber-800 font-bold px-5 py-1.5 rounded-full text-xs border border-amber-200 shadow-sm mt-1">
+                    Bahasa Indonesia • Kelas 5 SD
+                </div>
+            </div>
+
+            <!-- Ikon Gambar Tumpukan Buku -->
+            <div class="my-4 relative animate-float">
+                <div class="w-28 h-28 bg-amber-200/80 rounded-full flex items-center justify-center border-4 border-white shadow-inner mx-auto relative">
+                    <span class="text-6xl">📚</span>
+                    <span class="absolute -right-1 bottom-2 text-2xl">✨</span>
+                </div>
+            </div>
+
+            <!-- Judul Utama & Subjudul -->
+            <div class="w-full mb-3">
+                <h1 class="font-title text-3xl font-bold text-sky-600 mb-1 tracking-wide">
+                    Petualangan Kata
+                </h1>
+                <p class="text-sm font-bold text-gray-600">
+                    Ayo Asah Kemampuan <span class="text-purple-600 font-extrabold">Sinonim</span> & <span class="text-rose-500 font-extrabold">Antonim</span>!
+                </p>
+            </div>
+
+            <!-- Form Data Siswa -->
+            <div class="w-full bg-blue-50/60 p-4 rounded-2xl border-2 border-blue-200 text-left space-y-3 mb-3">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5">
+                        Nama Lengkap Siswa:
+                    </label>
+                    <input type="text" id="input-nama" placeholder="Contoh: Budi Santoso" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-sky-300 focus:outline-none focus:border-sky-500 font-bold text-sm text-gray-800 bg-white shadow-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5">
+                        Kelas:
+                    </label>
+                    <div class="relative">
+                        <select id="select-kelas" disabled class="w-full px-3.5 py-2.5 rounded-xl border-2 border-sky-300 bg-white font-bold text-sm text-gray-800 appearance-none cursor-not-allowed pr-8">
+                            <option value="Kelas 5 - B" selected>Kelas 5 - B</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-gray-500">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kotak Cara Bermain -->
+            <div class="w-full bg-amber-50/70 p-3.5 rounded-2xl border border-amber-200 text-left text-xs text-amber-900 space-y-1 mb-4">
+                <div class="font-bold flex items-center gap-1.5 text-amber-800">
+                    <span>💡</span> <span>Cara Bermain:</span>
+                </div>
+                <ul class="list-disc pl-5 space-y-0.5 font-semibold text-[11px] text-amber-900/90">
+                    <li>Jawab <strong>20 soal</strong> sinonim & antonim secara cermat.</li>
+                    <li>Dapatkan skor total hingga <strong>100</strong> dan bintang penghargaan!</li>
+                    <li>Kirimkan laporan nilai langsung ke WhatsApp Guru.</li>
+                </ul>
+            </div>
+
+            <!-- Tombol Mulai -->
+            <button onclick="startGame()" class="w-full bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-title text-xl font-extrabold py-3.5 px-6 rounded-2xl shadow-md border-b-4 border-emerald-700 active:border-b-0 btn-bounce flex items-center justify-center gap-2">
+                <span>MULAI PETUALANGAN</span>
+                <i class="fas fa-play text-base ml-1"></i>
+            </button>
+        </div>
+
+        <!-- ==================== 2. HALAMAN GAME ==================== -->
+        <div id="screen-game" class="p-5 hidden flex-col justify-between flex-grow relative">
+            
+            <!-- Header Game (Progress Bar & Skor) -->
+            <div>
+                <div class="flex justify-between items-center mb-2 text-xs font-bold text-gray-600">
+                    <span>Soal: <strong id="question-number" class="text-sky-600 text-sm">1/20</strong></span>
+                    <span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full border border-amber-300 font-extrabold">
+                        Skor: <strong id="current-score" class="text-amber-700 text-sm">0</strong>
+                    </span>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full bg-gray-200 rounded-full h-3 mb-4 overflow-hidden p-0.5 border border-gray-300">
+                    <div id="progress-bar" class="bg-gradient-to-r from-sky-400 to-sky-600 h-full rounded-full transition-all duration-300" style="width: 5%"></div>
+                </div>
+
+                <!-- Kartu Pertanyaan -->
+                <div class="bg-sky-50 rounded-2xl p-4 border-2 border-sky-200 shadow-sm relative mb-4">
+                    <span id="badge-kategori" class="bg-sky-600 text-white text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-md inline-block mb-2 tracking-wider">
+                        SINONIM
+                    </span>
+                    <h2 id="question-text" class="font-bold text-gray-800 text-base leading-snug">
+                        Memuat pertanyaan...
+                    </h2>
+                </div>
+
+                <!-- Pilihan Jawaban -->
+                <div id="options-container" class="space-y-2.5">
+                    <!-- Tombol Pilihan Jawaban Didesain via JS -->
+                </div>
+            </div>
+
+            <!-- Area Feedback Pembahasan -->
+            <div id="feedback-area" class="mt-3 p-3 rounded-2xl text-center hidden">
+                <div id="feedback-title" class="font-title text-sm font-bold mb-0.5"></div>
+                <div id="feedback-desc" class="text-xs font-semibold text-gray-700"></div>
+                <button onclick="nextQuestion()" class="mt-2 w-full bg-sky-600 text-white font-title text-sm py-2 px-4 rounded-xl shadow border-b-2 border-sky-800 btn-bounce">
+                    SOAL BERIKUTNYA <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+
+            <!-- Maskot Pop-Up Animasi Lucu saat menjawab -->
+            <div id="mascot-overlay" class="absolute inset-0 bg-black/40 backdrop-blur-sm hidden flex-col items-center justify-center p-4 z-50">
+                <div id="mascot-card" class="bg-white p-5 rounded-3xl border-4 shadow-2xl flex flex-col items-center text-center max-w-xs w-full">
+                    <div id="mascot-emoji" class="text-6xl mb-2 animate-bounce">🐱</div>
+                    <div id="mascot-title" class="font-title text-2xl font-bold mb-1">HEBAT!</div>
+                    <p id="mascot-desc" class="text-xs text-gray-600 font-semibold mb-3">Kucing Pintar bangga sama kamu!</p>
+                    <span id="mascot-badge" class="px-3 py-1 rounded-full text-xs font-bold text-white bg-green-500">+5 POIN</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 3. HALAMAN AKHIR / RAPOR ==================== -->
+        <div id="screen-result" class="p-5 hidden flex-col items-center justify-between flex-grow text-center">
+            <div class="w-full">
+                
+                <!-- Area Kartu Rapor -->
+                <div id="rapor-card" class="bg-white p-4 rounded-3xl border-2 border-sky-200 shadow-sm mb-3 text-center">
+                    
+                    <!-- Header Rapor -->
+                    <div class="inline-block bg-sky-600 text-white px-3 py-1 rounded-full text-[10px] font-black tracking-wider uppercase mb-1">
+                        🏫 SD NEGERI MIAWA
+                    </div>
+                    <div class="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-2">Rapor Hasil PJJ Bahasa Indonesia</div>
+                    <h1 class="text-2xl font-extrabold text-sky-600 mb-2 font-title">Petualangan Selesai!</h1>
+
+                    <!-- Badge Penghargaan & Skor -->
+                    <div class="bg-gradient-to-b from-amber-50 to-orange-50 p-4 rounded-2xl border-2 border-amber-300 mb-3 shadow-sm relative">
+                        <div id="reward-icon" class="text-5xl mb-1">🏆</div>
+                        <h3 id="reward-title" class="font-title text-xl font-bold text-amber-800 mb-1">Ahli Kata</h3>
+                        <p id="reward-desc" class="text-xs text-amber-900 font-semibold mb-3">Luar biasa! Kamu memahami Sinonim & Antonim dengan baik.</p>
+                        
+                        <!-- Detail Skor -->
+                        <div class="grid grid-cols-2 gap-2 bg-white p-2.5 rounded-xl border border-amber-200">
+                            <div class="text-center border-r border-gray-100">
+                                <span class="block text-[10px] text-gray-400 font-bold uppercase">Nilai Akhir</span>
+                                <span id="final-score" class="text-3xl font-extrabold text-emerald-600">100</span>
+                            </div>
+                            <div class="text-center">
+                                <span class="block text-[10px] text-gray-400 font-bold uppercase">Jawaban Benar</span>
+                                <span id="final-correct" class="text-3xl font-extrabold text-sky-600">20/20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detail Data Siswa -->
+                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-left text-xs space-y-1">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Nama Siswa:</span>
+                            <span id="res-nama" class="font-bold text-gray-800">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Kelas:</span>
+                            <span class="font-extrabold text-sky-700 bg-sky-100 px-2 py-0.5 rounded">Kelas 5 - B</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Sekolah:</span>
+                            <span class="font-bold text-gray-800">SD NEGERI MIAWA</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tombol Kirim Ke WhatsApp -->
+            <div class="w-full space-y-2">
+                <button onclick="shareScreenshotToWA()" id="btn-share-wa" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-title text-base py-3 px-4 rounded-2xl shadow-lg border-b-4 border-emerald-700 active:border-b-0 btn-bounce flex items-center justify-center gap-2">
+                    <i class="fab fa-whatsapp text-xl"></i>
+                    <span>📸 KIRIM SCREENSHOT KE WA</span>
+                </button>
+
+                <!-- Tombol Cadangan Pesan Teks -->
+                <button onclick="sendTextToWA()" class="w-full bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold text-xs py-2 px-3 rounded-xl border border-sky-200 flex items-center justify-center gap-1">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Kirim via Teks Pesan WA</span>
+                </button>
+
+                <!-- Main Lagi -->
+                <button onclick="restartGame()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-title text-xs py-2 px-3 rounded-xl btn-bounce">
+                    <i class="fas fa-rotate-right mr-1"></i> Main Lagi
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- AUDIO SYNTHESIZER SOUND EFFECTS -->
+    <script>
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioCtx();
+            }
+        }
+
+        function playSound(type) {
+            initAudio();
+            if (!audioCtx) return;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'correct') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1);
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2);
+
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+
+                osc.start(now);
+                osc.stop(now + 0.35);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(130.81, now + 0.2);
+
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'win') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.setValueAtTime(554.37, now + 0.1);
+                osc.frequency.setValueAtTime(659.25, now + 0.2);
+                osc.frequency.setValueAtTime(880, now + 0.3);
+
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+
+                osc.start(now);
+                osc.stop(now + 0.5);
+            }
+        }
+    </script>
+
+    <!-- LOGIKA GAME & BANK 20 SOAL -->
+    <script>
+        // Bank 20 Soal Bahasa Indonesia Kelas 5 SD
+        const questionBank = [
+            {
+                category: 'SINONIM (Persamaan Kata)',
+                question: 'Persamaan kata (sinonim) dari kata <span class="text-sky-600 font-extrabold underline">"PARAS"</span> adalah...',
+                options: ['Wajah', 'Suara', 'Pakaian', 'Rambut'],
+                answer: 0,
+                explanation: 'Paras artinya adalah wajah atau rupa muka.'
+            },
+            {
+                category: 'KATEGORI KATA',
+                question: 'Pasangan kata: <br><span class="text-purple-600 font-extrabold text-lg">"Besar — Agung"</span> termasuk kelompok...',
+                options: ['Sinonim (Persamaan Kata)', 'Antonim (Lawan Kata)'],
+                answer: 0,
+                explanation: 'Besar dan Agung memiliki makna yang sama/setara (Sinonim).'
+            },
+            {
+                category: 'ANTONIM (Lawan Kata)',
+                question: 'Lawan kata (antonim) dari kata <span class="text-rose-500 font-extrabold underline">"HEMAT"</span> adalah...',
+                options: ['Pelit', 'Boros', 'Cermat', 'Kikir'],
+                answer: 1,
+                explanation: 'Lawan dari berhemat dalam menggunakan sesuatu adalah boros.'
+            },
+            {
+                category: 'KATEGORI KATA',
+                question: 'Pasangan kata: <br><span class="text-purple-600 font-extrabold text-lg">"Tradisional — Modern"</span> termasuk kelompok...',
+                options: ['Sinonim (Persamaan Kata)', 'Antonim (Lawan Kata)'],
+                answer: 1,
+                explanation: 'Tradisional berlawanan arti dengan Modern (Antonim).'
+            },
+            {
+                category: 'SINONIM (Persamaan Kata)',
+                question: 'Ibu Guru memiliki sifat yang sangat <span class="text-sky-600 font-extrabold underline">"ARIF"</span>. Sinonim kata arif adalah...',
+                options: ['Sombong', 'Bijaksana', 'Cepat', 'Galak'],
+                answer: 1,
+                explanation: 'Arif bermakna bijaksana dan cerdik.'
+            },
+            {
+                category: 'ANTONIM (Lawan Kata)',
+                question: 'Sungai di dekat desa sangat <span class="text-rose-500 font-extrabold underline">"DANGKAL"</span>. Antonim kata dangkal adalah...',
+                options: ['Dalam', 'Jernih', 'Keruh', 'Panjang'],
+                answer: 0,
+                explanation: 'Lawan dari air yang dangkal adalah dalam.'
+            },
+            {
+                category: 'KATEGORI KATA',
+                question: 'Pasangan kata: <br><span class="text-purple-600 font-extrabold text-lg">"Flora — Tumbuhan"</span> termasuk kelompok...',
+                options: ['Sinonim (Persamaan Kata)', 'Antonim (Lawan Kata)'],
+                answer: 0,
+                explanation: 'Flora adalah istilah ilmiah untuk dunia tumbuhan (Sinonim).'
+            },
+            {
+                category: 'SINONIM (Persamaan Kata)',
+                question: 'Sinonim dari kata <span class="text-sky-600 font-extrabold underline">"DINDING"</span> adalah...',
+                options: ['Atap', 'Tembok', 'Lantai', 'Pintu'],
+                answer: 1,
+                explanation: 'Dinding dan tembok memiliki persamaan makna.'
+            },
+            {
+                category: 'ANTONIM (Lawan Kata)',
+                question: 'Antonim dari kata <span class="text-rose-500 font-extrabold underline">"BERHASIL"</span> adalah...',
+                options: ['Juara', 'Gagal', 'Selesai', 'Menang'],
+                answer: 1,
+                explanation: 'Lawan dari berhasil adalah gagal.'
+            },
+            {
+                category: 'KATEGORI KATA',
+                question: 'Pasangan kata: <br><span class="text-purple-600 font-extrabold text-lg">"Subur — Gembur"</span> termasuk kelompok...',
+                options: ['Sinonim (Persamaan Kata)', 'Antonim (Lawan Kata)'],
+                answer: 0,
+                explanation: 'Subur dan gembur (untuk tanah) merujuk pada persamaan makna (Sinonim).'
+            },
+            {
+                category: 'SINONIM (Persamaan Kata)',
+                question: 'Persamaan kata dari <span class="text-sky-600 font-extrabold underline">"GIAT"</span> belajar adalah...',
+                options: ['Malas', 'Tekun', 'Lambat', 'Lemas'],
+                answer: 1,
+                explanation: 'Giat memiliki makna yang sama dengan tekun atau rajin.'
+            },
+            {
+                category: 'ANTONIM (Lawan Kata)',
+                question: 'Lawan kata dari kata <span class="text-rose-500 font-extrabold underline">"ABADI"</span> adalah...',
+                options: ['Fana / Sementara', 'Kekal', 'Selamanya', 'Panjang'],
+                answer: 0,
+                explanation: 'Lawan kata dari abadi (kekal) adalah fana atau sementara.'
+            },
+            {
+                category: 'SINONIM (Persamaan Kata)',
+                question: 'Sinonim dari kata <span class="text-sky-600 font-extrabold underline">"HULU"</span> sungai adalah...',
+                options: ['Muara', 'Pusat / Awal', 'Tepi', 'Dasar'],
+                answer: 1,
+                explanation: 'Hulu artinya adalah bagian awal atau pusat mata air sungai.'
+            },
+            {
+                category: 'ANTONIM (Lawan Kata)',
+                question: 'Antonim dari kata <span class="text-rose-500 font-extrabold underline">"PANAS"</span> adalah...',
+                options: ['Hangat', 'Dingin', 'Terik', 'Mendidih'],
+                answer: 1,
+                explanation: 'Lawan dari suhu panas adalah dingin.'
+            },
+            {
+                category: 'KATEGORI KATA',
+                question: 'Pasangan kata: <br><span class="text-purple-600 font-extrabold text-lg">"Gugur — Rontok"</span> termasuk kelompok...',
+                options: ['Sinonim (Persamaan Kata)', 'Antonim (Lawan Kata)'],
+                answer: 0,
+                explanation: 'Gugur dan rontok (seperti daun/rambut) adalah persamaan kata (Sinonim).'
+            },
+            {
+                category: 'SINONIM (Persamaan Kata)',
+                question: 'Anak itu sangat <span class="text-sky-600 font-extrabold underline">"DERMAWAN"</span>. Sinonim kata dermawan adalah...',
+                options: ['Kikir', 'Pemurah / Suka memberi', 'Pelit', 'Sombong'],
+                answer: 1,
+                explanation: 'Dermawan artinya adalah pemurah atau suka memberi kepada sesama.'
+            },
+            {
+                category: 'ANTONIM (Lawan Kata)',
+                question: 'Antonim dari kata <span class="text-rose-500 font-extrabold underline">"PROTAGONIS"</span> (tokoh baik) adalah...',
+                options: ['Antagonis', 'Tragonis', 'Utama', 'Pembantu'],
+                answer: 0,
+                explanation: 'Lawan dari peran protagonis (baik) adalah antagonis (jahat/penentang).'
+            },
+            {
+                category: 'KATEGORI KATA',
+                question: 'Pasangan kata: <br><span class="text-purple-600 font-extrabold text-lg">"Cepat — Lambat"</span> termasuk kelompok...',
+                options: ['Sinonim (Persamaan Kata)', 'Antonim (Lawan Kata)'],
+                answer: 1,
+                explanation: 'Cepat dan lambat berlawanan arti (Antonim).'
+            },
+            {
+                category: 'SINONIM (Persamaan Kata)',
+                question: 'Sinonim kata <span class="text-sky-600 font-extrabold underline">"KULTUR"</span> adalah...',
+                options: ['Bahasa', 'Budaya', 'Agama', 'Suku'],
+                answer: 1,
+                explanation: 'Kultur adalah istilah lain dari kebudayaan.'
+            },
+            {
+                category: 'ANTONIM (Lawan Kata)',
+                question: 'Lawan kata dari <span class="text-rose-500 font-extrabold underline">"TINGGI"</span> adalah...',
+                options: ['Panjang', 'Rendah', 'Besar', 'Luas'],
+                answer: 1,
+                explanation: 'Lawan dari ukuran tinggi adalah rendah.'
+            }
+        ];
+
+        // Karakter Maskot Animasi Lucu
+        const happyCharacters = [
+            { emoji: '🐱🎉', title: 'HEBAT BANGET!', desc: 'Kucing Cerdas bangga sama kamu!' },
+            { emoji: '🐶✨', title: 'Luar Biasa!', desc: 'Anjing Pintar kasih 5 bintang!' },
+            { emoji: '🦊🚀', title: 'PINTAR SEKALI!', desc: 'Rubah Cerdik kagum sama jawabanmu!' },
+            { emoji: '🐼🥳', title: 'JOSS BANGET!', desc: 'Panda Senang menari untukmu!' },
+            { emoji: '🦁👑', title: 'MANTAP JIWA!', desc: 'Singa Raja sebut kamu Ahli Kata!' }
+        ];
+
+        const sadCharacters = [
+            { emoji: '🐵🙈', title: 'OOPS, SALAH!', desc: 'Kera Lucu bingung, ayo coba pelajari ya!' },
+            { emoji: '🐰🥺', title: 'SABAR YA!', desc: 'Kelinci Gemoy yakin kamu bisa di soal berikutnya!' },
+            { emoji: '🐧❄️', title: 'HAMPIR BENAR!', desc: 'Penguin Mungil ajak kamu tetap semangat!' },
+            { emoji: '🐻💧', title: 'JANGAN MENYERAH!', desc: 'Beruang Baik kasih semangat tambahan!' }
+        ];
+
+        // State Aplikasi
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctAnswersCount = 0;
+        let studentName = "";
+        const studentClass = "Kelas 5 - B";
+        let isAnswered = false;
+
+        // DOM Elements
+        const screenStart = document.getElementById('screen-start');
+        const screenGame = document.getElementById('screen-game');
+        const screenResult = document.getElementById('screen-result');
+
+        // Fungsi Mulai Game
+        function startGame() {
+            const nameInput = document.getElementById('input-nama').value.trim();
+            if (!nameInput) {
+                alert('Silakan isi Nama Lengkap terlebih dahulu ya! 😊');
+                return;
+            }
+            studentName = nameInput;
+
+            currentQuestionIndex = 0;
+            score = 0;
+            correctAnswersCount = 0;
+
+            screenStart.classList.add('hidden');
+            screenGame.classList.remove('hidden');
+            screenGame.classList.add('flex');
+
+            loadQuestion();
+        }
+
+        // Memuat Soal
+        function loadQuestion() {
+            isAnswered = false;
+            const q = questionBank[currentQuestionIndex];
+
+            document.getElementById('question-number').innerText = `${currentQuestionIndex + 1}/${questionBank.length}`;
+            document.getElementById('current-score').innerText = score;
+            document.getElementById('progress-bar').style.width = `${((currentQuestionIndex + 1) / questionBank.length) * 100}%`;
+            document.getElementById('badge-kategori').innerText = q.category;
+            document.getElementById('question-text').innerHTML = q.question;
+
+            document.getElementById('feedback-area').classList.add('hidden');
+            document.getElementById('mascot-overlay').classList.add('hidden');
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-3 rounded-xl border-2 border-gray-200 bg-white hover:bg-sky-50 text-gray-700 font-bold text-sm transition-all shadow-sm flex items-center justify-between btn-bounce opt-btn-${idx}`;
+                btn.onclick = () => selectAnswer(idx);
+
+                const letters = ['A', 'B', 'C', 'D'];
+                const labelPrefix = `<span class="w-6 h-6 rounded-lg bg-gray-100 border border-gray-300 text-gray-600 flex items-center justify-center text-xs mr-2 font-black">${letters[idx]}</span>`;
+
+                btn.innerHTML = `<div class="flex items-center">${labelPrefix} <span>${opt}</span></div> <i class="fas fa-chevron-right text-gray-300 text-xs"></i>`;
+                container.appendChild(btn);
+            });
+        }
+
+        // Animasi Maskot Lucu Pop-up
+        function triggerMascotAnimation(isCorrect) {
+            const overlay = document.getElementById('mascot-overlay');
+            const card = document.getElementById('mascot-card');
+            const emojiEl = document.getElementById('mascot-emoji');
+            const titleEl = document.getElementById('mascot-title');
+            const descEl = document.getElementById('mascot-desc');
+            const badgeEl = document.getElementById('mascot-badge');
+
+            card.classList.remove('anim-pop', 'anim-shake');
+
+            let charData;
+            if (isCorrect) {
+                charData = happyCharacters[Math.floor(Math.random() * happyCharacters.length)];
+                card.className = "bg-white p-5 rounded-3xl border-4 border-emerald-400 shadow-2xl flex flex-col items-center text-center max-w-xs w-full anim-pop";
+                titleEl.className = "font-title text-2xl font-bold text-emerald-600 mb-1";
+                badgeEl.innerText = "+5 POIN";
+                badgeEl.className = "px-3 py-1 rounded-full text-xs font-bold text-white bg-emerald-500";
+            } else {
+                charData = sadCharacters[Math.floor(Math.random() * sadCharacters.length)];
+                card.className = "bg-white p-5 rounded-3xl border-4 border-rose-400 shadow-2xl flex flex-col items-center text-center max-w-xs w-full anim-shake";
+                titleEl.className = "font-title text-2xl font-bold text-rose-500 mb-1";
+                badgeEl.innerText = "0 POIN";
+                badgeEl.className = "px-3 py-1 rounded-full text-xs font-bold text-white bg-rose-500";
+            }
+
+            emojiEl.innerText = charData.emoji;
+            titleEl.innerText = charData.title;
+            descEl.innerText = charData.desc;
+
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }, 1100);
+        }
+
+        // Memilih Jawaban
+        function selectAnswer(selectedIndex) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const q = questionBank[currentQuestionIndex];
+            const isCorrect = (selectedIndex === q.answer);
+
+            const container = document.getElementById('options-container');
+            const buttons = container.querySelectorAll('button');
+            buttons.forEach(btn => btn.disabled = true);
+
+            triggerMascotAnimation(isCorrect);
+
+            const feedbackArea = document.getElementById('feedback-area');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackDesc = document.getElementById('feedback-desc');
+
+            if (isCorrect) {
+                playSound('correct');
+                score += 5;
+                correctAnswersCount++;
+                document.getElementById('current-score').innerText = score;
+
+                buttons[selectedIndex].classList.remove('bg-white', 'border-gray-200');
+                buttons[selectedIndex].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900');
+
+                feedbackArea.className = "mt-3 p-3 rounded-2xl text-center border-2 border-emerald-300 bg-emerald-50";
+                feedbackTitle.className = "font-title text-sm font-bold text-emerald-600 mb-0.5";
+                feedbackTitle.innerHTML = `<i class="fas fa-circle-check"></i> JAWABAN BENAR (+5 POIN)`;
+                feedbackDesc.innerText = q.explanation;
+            } else {
+                playSound('wrong');
+                buttons[selectedIndex].classList.remove('bg-white', 'border-gray-200');
+                buttons[selectedIndex].classList.add('bg-rose-100', 'border-rose-400', 'text-rose-900');
+
+                buttons[q.answer].classList.remove('bg-white', 'border-gray-200');
+                buttons[q.answer].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900');
+
+                feedbackArea.className = "mt-3 p-3 rounded-2xl text-center border-2 border-rose-300 bg-rose-50";
+                feedbackTitle.className = "font-title text-sm font-bold text-rose-500 mb-0.5";
+                feedbackTitle.innerHTML = `<i class="fas fa-circle-xmark"></i> JAWABAN KURANG TEPAT`;
+                feedbackDesc.innerText = q.explanation;
+            }
+
+            setTimeout(() => {
+                feedbackArea.classList.remove('hidden');
+            }, 1150);
+        }
+
+        // Lanjut ke soal berikutnya
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questionBank.length) {
+                loadQuestion();
+            } else {
+                finishGame();
+            }
+        }
+
+        // Selesai Permainan & Tampilkan Rapor
+        function finishGame() {
+            playSound('win');
+            screenGame.classList.add('hidden');
+            screenGame.classList.remove('flex');
+            screenResult.classList.remove('hidden');
+            screenResult.classList.add('flex');
+
+            document.getElementById('res-nama').innerText = studentName;
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = `${correctAnswersCount}/${questionBank.length}`;
+
+            const rewardIcon = document.getElementById('reward-icon');
+            const rewardTitle = document.getElementById('reward-title');
+            const rewardDesc = document.getElementById('reward-desc');
+
+            if (score >= 90) {
+                rewardIcon.innerText = "🏆";
+                rewardTitle.innerText = "Juara Bahasa Indonesia!";
+                rewardDesc.innerText = "Sempurna! Kamu memahami Sinonim & Antonim dengan sangat luar biasa!";
+            } else if (score >= 70) {
+                rewardIcon.innerText = "🌟";
+                rewardTitle.innerText = "Ahli Kata Bintang";
+                rewardDesc.innerText = "Bagus sekali! Kamu sudah menguasai sebagian besar materi dengan baik.";
+            } else {
+                rewardIcon.innerText = "📖";
+                rewardTitle.innerText = "Pembelajar Giat";
+                rewardDesc.innerText = "Tetap semangat ya! Cobalah bermain sekali lagi agar nilaimu semakin sempurna.";
+            }
+        }
+
+        // Fitur Ambil & Kirim Tangkapan Layar (Screenshot) ke WhatsApp
+        async function shareScreenshotToWA() {
+            const btn = document.getElementById('btn-share-wa');
+            const originalHTML = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin text-xl"></i> <span>Mengambil Gambar Rapor...</span>`;
+
+            try {
+                const raporCard = document.getElementById('rapor-card');
+                const canvas = await html2canvas(raporCard, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff'
+                });
+
+                canvas.toBlob(async (blob) => {
+                    const fileName = `Rapor_${studentName.replace(/\s+/g, '_')}_Kelas5B.png`;
+                    const file = new File([blob], fileName, { type: 'image/png' });
+
+                    const captionText = `*RAPOR PERMAINAN BAHASA INDONESIA*\n🏫 SD NEGERI MIAWA\n\n👤 Nama: *${studentName}*\n👥 Kelas: *Kelas 5 - B*\n💯 Nilai: *${score}*\n✅ Benar: *${correctAnswersCount}/${questionBank.length}*\n\nBerikut hasil kuis permainan saya!`;
+
+                    // Jika browser HP mendukung Web Share API langsung
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: 'Rapor Petualangan Kata',
+                                text: captionText
+                            });
+                            btn.disabled = false;
+                            btn.innerHTML = originalHTML;
+                            return;
+                        } catch (err) {
+                            console.log('Share dibatalkan', err);
+                        }
+                    }
+
+                    // Fallback: Unduh Gambar PNG dan Buka WhatsApp
+                    const imageUrl = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = imageUrl;
+                    link.download = fileName;
+                    link.click();
+
+                    alert('Foto Rapor berhasil diunduh ke HP kamu!\n\nSilakan kirimkan foto tersebut di WhatsApp yang terbuka setelah ini.');
+
+                    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(captionText)}`;
+                    setTimeout(() => {
+                        window.open(waUrl, '_blank');
+                        btn.disabled = false;
+                        btn.innerHTML = originalHTML;
+                    }, 800);
+
+                }, 'image/png');
+
+            } catch (error) {
+                alert('Gagal mengambil tangkapan layar otomatis. Silakan screenshot layar HP kamu secara manual lalu kirim ke WhatsApp Guru ya!');
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
+        }
+
+        // Kirim via Pesan Teks WhatsApp
+        function sendTextToWA() {
+            const captionText = `*RAPOR PERMAINAN BAHASA INDONESIA*\n🏫 SD NEGERI MIAWA\n\n👤 Nama: *${studentName}*\n👥 Kelas: *Kelas 5 - B*\n💯 Nilai: *${score}*\n✅ Benar: *${correctAnswersCount}/${questionBank.length}*\n\nHasil PJJ Bahasa Indonesia Materi Sinonim & Antonim!`;
+            const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(captionText)}`;
+            window.open(waUrl, '_blank');
+        }
+
+        // Restart Game
+        function restartGame() {
+            screenResult.classList.add('hidden');
+            screenResult.classList.remove('flex');
+            screenStart.classList.remove('hidden');
+            screenStart.classList.add('flex');
+        }
+    </script>
+</body>
+</html>
